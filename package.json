@@ -1,0 +1,46 @@
+{
+  "name": "hangly",
+  "productName": "Hangly",
+  "version": "1.0.0",
+  "description": "A tiny piece of motion for your desktop.",
+  "main": "src/main/main.js",
+  "author": "Hangly Team",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder --win portable zip",
+    "dist": "electron-builder --win portable zip"
+  },
+  "keywords": [
+    "electron",
+    "desktop-overlay",
+    "hangly",
+    "windows"
+  ],
+  "devDependencies": {
+    "electron": "^31.2.0",
+    "electron-builder": "^26.0.12",
+    "png-to-ico": "^2.1.8"
+  },
+  "build": {
+    "appId": "com.hangly.desktop",
+    "productName": "Hangly",
+    "copyright": "Copyright © 2026 Hangly Team",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        "portable",
+        "zip"
+      ],
+      "icon": "assets/icon.ico"
+    }
+  }
+}

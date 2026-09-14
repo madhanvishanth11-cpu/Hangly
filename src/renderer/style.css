@@ -1,0 +1,611 @@
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* Draggable region centered over top anchor pin for window moving */
+#drag-handle {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 40px;
+  border-radius: 20px;
+  -webkit-app-region: drag;
+  cursor: grab;
+  z-index: 10;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+#drag-handle:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+/* Modal Overlay Styles (Charm Studio, Library, Settings) */
+#charm-studio-modal, #charm-library-modal, #settings-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#charm-studio-modal.studio-hidden, #charm-library-modal.studio-hidden, #settings-modal.studio-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.95);
+}
+
+.studio-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+}
+
+.studio-panel {
+  position: relative;
+  width: 92%;
+  max-width: 350px;
+  background: rgba(30, 30, 35, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  color: #F2F2F7;
+  padding: 16px 18px;
+  z-index: 101;
+}
+
+.studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+.studio-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+#studio-close-btn, #lib-close-btn, #settings-close-btn {
+  background: none;
+  border: none;
+  color: #8E8E93;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#studio-close-btn:hover, #lib-close-btn:hover, #settings-close-btn:hover {
+  color: #FFFFFF;
+}
+
+/* Settings View Scrollable Container */
+.settings-scroll {
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.settings-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Studio Editor Live Preview */
+.studio-preview-box {
+  position: relative;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+#studio-preview-canvas {
+  display: block;
+  width: 220px;
+  height: 140px;
+}
+
+.studio-preview-label {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-size: 9.5px;
+  color: #8E8E93;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Studio Sliders & Controls */
+.studio-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #D1D1D6;
+}
+
+.slider-group input[type="range"] {
+  width: 100%;
+  accent-color: #007AFF;
+  cursor: pointer;
+}
+
+.studio-select-group {
+  margin-top: 4px;
+}
+
+.studio-select-group select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  outline: none;
+}
+
+.studio-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.studio-btn-sec {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #D1D1D6;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.studio-btn-sec:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.studio-btn-prim {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.studio-btn-prim:hover {
+  background: #0056B3;
+}
+
+.checkbox-label {
+  font-size: 11px;
+  color: #D1D1D6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* Category Filter Tabs */
+.lib-categories {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.cat-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #D1D1D6;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cat-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cat-btn.active {
+  background: #007AFF;
+  border-color: #007AFF;
+  color: #FFFFFF;
+}
+
+/* Library Grid */
+.lib-actions {
+  margin-bottom: 8px;
+}
+
+.add-custom-btn {
+  width: 100%;
+  background: rgba(0, 122, 255, 0.15);
+  border: 1px dashed #007AFF;
+  color: #60A5FA;
+  padding: 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.add-custom-btn:hover {
+  background: rgba(0, 122, 255, 0.3);
+  color: #FFFFFF;
+}
+
+.lib-grid-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.empty-msg {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 11px;
+  color: #8E8E93;
+  padding: 20px 0;
+}
+
+.lib-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.lib-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.lib-card.selected {
+  border-color: #007AFF;
+  background: rgba(0, 122, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
+}
+
+.lib-card-preview {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.lib-card-preview img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.check-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #007AFF;
+  color: white;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.delete-charm-btn {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background: rgba(255, 59, 48, 0.9);
+  border: none;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.delete-charm-btn:hover {
+  background: #FF3B30;
+  transform: scale(1.15);
+}
+
+.edit-studio-btn {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: rgba(44, 44, 46, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.edit-studio-btn:hover {
+  background: #007AFF;
+  transform: scale(1.15);
+}
+
+.lib-card-title {
+  font-size: 10.5px;
+  color: #F2F2F7;
+  text-align: center;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.studio-footer {
+  margin-top: 12px;
+  text-align: right;
+}
+
+#studio-done-btn, #lib-done-btn {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+#studio-done-btn:hover, #lib-done-btn:hover {
+  background: #0056B3;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Accessibility & Interaction States */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #007AFF;
+  outline-offset: 2px;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Numeric Value Badge Styling */
+.slider-group label span {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 10px;
+  color: #60A5FA;
+}
+
+/* About Card Styling */
+.about-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  background: rgba(0, 122, 255, 0.08);
+  border: 1px solid rgba(0, 122, 255, 0.2);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.about-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.about-ver {
+  font-size: 10.5px;
+  color: #60A5FA;
+  margin-bottom: 2px;
+}
+
+.about-slogan {
+  font-size: 10px;
+  color: #D1D1D6;
+  font-style: italic;
+}
+
+/* First Launch Welcome Toast Banner */
+.welcome-toast {
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 320px;
+  background: rgba(28, 28, 32, 0.95);
+  border: 1px solid rgba(0, 122, 255, 0.4);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #F2F2F7;
+  z-index: 99;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.welcome-toast.welcome-hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-10px);
+  pointer-events: none;
+}
+
+.welcome-content h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.welcome-content p {
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  color: #8E8E93;
+}
+
+.welcome-content ul {
+  margin: 0 0 12px 0;
+  padding-left: 16px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #D1D1D6;
+}
+
+#welcome-dismiss-btn {
+  width: 100%;
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#welcome-dismiss-btn:hover {
+  background: #0056B3;
+}
+
