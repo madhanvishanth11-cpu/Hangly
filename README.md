@@ -161,8 +161,11 @@ To run and modify Hangly locally:
 # Install dependencies
 npm install
 
-# Start development mode
+# Start Windows desktop development mode
 npm run dev
+
+# Start local web server (Vercel web preview)
+npm run serve
 ```
 
 ---

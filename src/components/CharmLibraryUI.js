@@ -76,7 +76,7 @@ export class CharmLibraryUI {
     doneBtn.addEventListener('click', hideHandler);
     backdrop.addEventListener('click', hideHandler);
 
-    // Native file picker custom charm import
+    // Native file picker custom charm import (or web file input fallback)
     addCustomBtn.addEventListener('click', async () => {
       if (window.hanglyAPI && window.hanglyAPI.selectCharmFile) {
         const result = await window.hanglyAPI.selectCharmFile();
@@ -88,6 +88,28 @@ export class CharmLibraryUI {
             this.onSelect(charm);
           }
         }
+      } else {
+        // Fallback for web browser environment (Vercel deployment)
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/png, image/jpeg, image/jpg, image/webp';
+        input.onchange = (evt) => {
+          const file = evt.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const dataUrl = e.target.result;
+            const name = file.name.replace(/\.[^/.]+$/, '');
+            const charm = await this.library.addCustomCharm(name, dataUrl);
+            this.activeCategory = 'Custom';
+            this.renderGrid();
+            if (typeof this.onSelect === 'function') {
+              this.onSelect(charm);
+            }
+          };
+          reader.readAsDataURL(file);
+        };
+        input.click();
       }
     });
 

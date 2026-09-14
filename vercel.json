@@ -1,0 +1,10 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/src/renderer/index.html",
+      "permanent": false
+    }
+  ]
+}

@@ -14,6 +14,10 @@ html, body {
   background: transparent;
 }
 
+body.web-mode {
+  background: radial-gradient(circle at top center, #1C1C24 0%, #0D0D11 100%);
+}
+
 /* Draggable region centered over top anchor pin for window moving */
 #drag-handle {
   position: absolute;

@@ -20,6 +20,11 @@ const settingsView = new SettingsView(settingsStore);
 let isPhysicsPaused = false;
 let isOverlayVisible = true;
 
+// Detect Web deployment vs Windows Electron environment
+if (!window.hanglyAPI) {
+  document.body.classList.add('web-mode');
+}
+
 // Initialize simulation with anchor point centered near top
 const initialAnchorX = (window.innerWidth || 360) / 2;
 const initialAnchorY = 35;

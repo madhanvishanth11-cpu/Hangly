@@ -9,6 +9,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
+    "serve": "node scripts/serve.js",
     "build": "electron-builder --win portable zip",
     "dist": "electron-builder --win portable zip"
   },
