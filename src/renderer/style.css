@@ -613,3 +613,401 @@ button:active {
   background: #0056B3;
 }
 
+/* ==================================================
+   WEB APPLICATION UI STYLES (Vercel / Browser Mode)
+   ================================================== */
+body.web-mode {
+  overflow-y: auto;
+  min-height: 100vh;
+  color: #F2F2F7;
+  background: radial-gradient(circle at top center, #1E1E26 0%, #0D0D12 100%);
+}
+
+body.web-mode #drag-handle {
+  display: none;
+}
+
+#web-app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Web Top Navigation Header */
+.web-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 24px;
+  background: rgba(22, 22, 28, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.web-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-icon {
+  font-size: 18px;
+}
+
+.brand-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #FFFFFF;
+}
+
+.web-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #A1A1A6;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nav-link:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-link.active {
+  color: #FFFFFF;
+  background: rgba(0, 122, 255, 0.2);
+  border-color: rgba(0, 122, 255, 0.4);
+  font-weight: 600;
+}
+
+/* Web Main Layout Grid */
+.web-main {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  flex: 1;
+}
+
+.web-canvas-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.canvas-card {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  background: rgba(18, 18, 24, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#canvas-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.canvas-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  color: #8E8E93;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 10px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+}
+
+/* Selected Charm Hero Card */
+.hero-charm-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 20px;
+}
+
+.hero-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-preview-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-preview-circle img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-badge {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #60A5FA;
+  font-weight: 600;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.hero-category {
+  font-size: 11px;
+  color: #8E8E93;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-btn-sec {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #D1D1D6;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.hero-btn-sec:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+.hero-btn-prim {
+  background: #007AFF;
+  border: none;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.hero-btn-prim:hover {
+  background: #0056B3;
+}
+
+/* Web Panel Views */
+.web-panel-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-card {
+  background: rgba(24, 24, 30, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.panel-link-btn {
+  background: none;
+  border: none;
+  color: #60A5FA;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.panel-link-btn:hover {
+  text-decoration: underline;
+}
+
+.charm-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.quick-charm-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quick-charm-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.quick-charm-item.active {
+  border-color: #007AFF;
+  background: rgba(0, 122, 255, 0.2);
+}
+
+.quick-charm-item img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.quick-charm-item span {
+  font-size: 10px;
+  color: #D1D1D6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.add-custom-btn-web {
+  background: rgba(0, 122, 255, 0.15);
+  border: 1px dashed #007AFF;
+  color: #60A5FA;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.add-custom-btn-web:hover {
+  background: rgba(0, 122, 255, 0.3);
+  color: #FFFFFF;
+}
+
+.web-grid-scroll {
+  max-height: 340px;
+  overflow-y: auto;
+  margin-top: 12px;
+  padding-right: 4px;
+}
+
+.studio-charm-name {
+  font-size: 11px;
+  color: #60A5FA;
+  background: rgba(0, 122, 255, 0.15);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.studio-controls-web {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.settings-list-web {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Responsive Layout Adjustments */
+@media (max-width: 880px) {
+  .web-main {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .canvas-card {
+    height: 280px;
+  }
+
+  .hero-charm-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .hero-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .web-nav {
+    overflow-x: auto;
+    max-width: 220px;
+  }
+}
+
+

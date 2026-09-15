@@ -7,6 +7,7 @@ import { SettingsStore } from '../services/SettingsStore.js';
 import { SettingsView } from '../views/SettingsView.js';
 import { CharmLibraryUI } from '../components/CharmLibraryUI.js';
 import { CharmStudioUI } from '../components/CharmStudioUI.js';
+import { WebUI } from '../web/WebUI.js';
 
 const canvas = document.getElementById('overlay-canvas');
 const ctx = canvas.getContext('2d');
@@ -64,6 +65,18 @@ const charmLibraryUI = new CharmLibraryUI(
     charmStudioUI.openWithCharm(charmToEdit);
   }
 );
+
+// Web Application UI Instance (for browser / Vercel deployment)
+const webUI = new WebUI(
+  hangingObject,
+  ropeSimulation,
+  audioService,
+  settingsStore,
+  charmStudioUI,
+  charmLibraryUI,
+  settingsView
+);
+webUI.init();
 
 // Startup initial impulse
 ropeSimulation.applyImpulse(40, 0);
