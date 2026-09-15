@@ -1,5 +1,7 @@
 {
   "cleanUrls": true,
+  "buildCommand": "echo static site",
+  "outputDirectory": ".",
   "redirects": [
     {
       "source": "/",
