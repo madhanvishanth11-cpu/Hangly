@@ -21,11 +21,9 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
   let reqUrl = req.url.split('?')[0];
 
-  // Redirect root request '/' to '/src/renderer/index.html' so base URL path is correct
-  if (reqUrl === '/' || reqUrl === '/index.html') {
-    res.writeHead(302, { 'Location': '/src/renderer/index.html' });
-    res.end();
-    return;
+  // Serve root index.html directly for /
+  if (reqUrl === '/') {
+    reqUrl = '/index.html';
   }
 
   let filePath = path.join(ROOT_DIR, reqUrl);

@@ -1,12 +1,5 @@
 {
   "cleanUrls": true,
   "buildCommand": "echo static site",
-  "outputDirectory": ".",
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/src/renderer/index.html",
-      "permanent": false
-    }
-  ]
+  "outputDirectory": "."
 }

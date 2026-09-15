@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=/src/renderer/index.html">
-  <title>Hangly</title>
-  <script>
-    window.location.replace('/src/renderer/index.html');
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangly — A tiny piece of motion for your desktop</title>
+  <link rel="stylesheet" href="src/renderer/style.css">
 </head>
-<body>
+<body tabindex="0">
+  <!-- Drag handle region at top anchor for moving overlay -->
+  <div id="drag-handle" title="Drag to move overlay"></div>
+  <canvas id="overlay-canvas"></canvas>
+  <script type="module" src="src/renderer/renderer.js"></script>
 </body>
 </html>
