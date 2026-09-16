@@ -16,6 +16,11 @@ export class RopeSimulation {
     this.lowEnergyFrameCount = 0;
     this.isDraggingCharm = false;
 
+    // Fixed / Locked Charm State
+    this.isFixed = false;
+    this.fixedX = 0;
+    this.fixedY = 0;
+
     this.initPoints();
   }
 
@@ -79,6 +84,7 @@ export class RopeSimulation {
    * @param {number} y 
    */
   setCharmDragPosition(x, y) {
+    if (this.isFixed) return; // Block dragging when charm is fixed/locked
     this.wakeUp();
     this.isDraggingCharm = true;
     const charmPoint = this.getBottomPoint();
@@ -161,6 +167,13 @@ export class RopeSimulation {
     }
 
     this.points[0].pinTo(this.anchorX, this.anchorY);
+
+    if (this.isFixed) {
+      const bottomPoint = this.getBottomPoint();
+      if (bottomPoint) {
+        bottomPoint.pinTo(this.fixedX, this.fixedY);
+      }
+    }
 
     const iterations = this.config.constraintIterations;
     const pointCount = this.points.length;

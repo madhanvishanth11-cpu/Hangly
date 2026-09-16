@@ -74,6 +74,7 @@ export class WebUI {
         <section class="web-canvas-section">
           <div class="canvas-card">
             <div id="canvas-container"></div>
+            <button id="fix-charm-btn" class="fix-charm-btn">FIX CHARM</button>
             <div class="canvas-hint">Drag or throw the hanging charm</div>
           </div>
 
@@ -96,6 +97,8 @@ export class WebUI {
     if (canvasContainer && canvas) {
       canvasContainer.appendChild(canvas);
     }
+
+    this.updateFixButtonState();
   }
 
   bindEvents() {
@@ -106,6 +109,12 @@ export class WebUI {
         this.navigate(route);
       });
     });
+
+    // FIX / UNFIX CHARM Button click handler
+    const fixBtn = document.getElementById('fix-charm-btn');
+    if (fixBtn) {
+      fixBtn.addEventListener('click', () => this.toggleFixCharm());
+    }
 
     // Brand click navigates home
     const brand = document.getElementById('nav-brand');
@@ -122,6 +131,49 @@ export class WebUI {
     this.settingsStore.onChange(() => {
       this.updateHeroCard();
     });
+  }
+
+  toggleFixCharm() {
+    const btn = document.getElementById('fix-charm-btn');
+    const bottomPoint = this.ropeSimulation.getBottomPoint();
+
+    if (this.ropeSimulation.isFixed) {
+      // Unfix charm
+      this.ropeSimulation.isFixed = false;
+      if (bottomPoint) bottomPoint.pinned = false;
+      this.ropeSimulation.isDraggingCharm = false;
+      if (btn) {
+        btn.textContent = 'FIX CHARM';
+        btn.classList.remove('is-fixed');
+      }
+      this.audioService.playRelease(300);
+      this.ropeSimulation.wakeUp();
+    } else {
+      // Fix charm at current position
+      this.ropeSimulation.isFixed = true;
+      if (bottomPoint) {
+        this.ropeSimulation.fixedX = bottomPoint.x;
+        this.ropeSimulation.fixedY = bottomPoint.y;
+        bottomPoint.pinned = true;
+      }
+      if (btn) {
+        btn.textContent = 'UNFIX CHARM';
+        btn.classList.add('is-fixed');
+      }
+      this.audioService.playGrab();
+    }
+  }
+
+  updateFixButtonState() {
+    const btn = document.getElementById('fix-charm-btn');
+    if (!btn) return;
+    if (this.ropeSimulation.isFixed) {
+      btn.textContent = 'UNFIX CHARM';
+      btn.classList.add('is-fixed');
+    } else {
+      btn.textContent = 'FIX CHARM';
+      btn.classList.remove('is-fixed');
+    }
   }
 
   handleInitialRoute() {
@@ -149,6 +201,7 @@ export class WebUI {
 
     this.renderPanel();
     this.updateHeroCard();
+    this.updateFixButtonState();
   }
 
   updateHeroCard() {

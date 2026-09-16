@@ -743,8 +743,7 @@ body.web-mode #drag-handle {
 .canvas-hint {
   position: absolute;
   bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 14px;
   font-size: 10.5px;
   color: #8E8E93;
   pointer-events: none;
@@ -752,6 +751,42 @@ body.web-mode #drag-handle {
   padding: 3px 10px;
   border-radius: 12px;
   backdrop-filter: blur(4px);
+}
+
+/* FIX / UNFIX CHARM Button inside Main Preview Area */
+.fix-charm-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  background: rgba(0, 122, 255, 0.25);
+  border: 1px solid #007AFF;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  touch-action: manipulation;
+}
+
+.fix-charm-btn:hover {
+  background: rgba(0, 122, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.fix-charm-btn.is-fixed {
+  background: rgba(255, 59, 48, 0.3);
+  border-color: #FF3B30;
+  color: #FF8A80;
+}
+
+.fix-charm-btn.is-fixed:hover {
+  background: rgba(255, 59, 48, 0.5);
 }
 
 /* Selected Charm Hero Card */
