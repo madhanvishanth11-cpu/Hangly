@@ -28,32 +28,42 @@ export class MouseInteractionHandler {
    * @param {number} radius 
    * @returns {boolean}
    */
+  /**
+   * Check if coordinates are over charm body
+   * @param {number} mx Relative X
+   * @param {number} my Relative Y
+   * @param {number} charmX 
+   * @param {number} charmY 
+   * @param {number} radius 
+   * @returns {boolean}
+   */
   isOverCharm(mx, my, charmX, charmY, radius) {
     const dx = mx - charmX;
     const dy = my - charmY;
-    const hitMargin = 8; // Extra touch/cursor margin for comfortable grabbing
-    return (dx * dx + dy * dy) <= Math.pow(radius + hitMargin, 2);
+    const hitMargin = 12; // Extra touch/cursor margin for comfortable grabbing
+    return (dx * dx + dy * dy) <= Math.pow((radius || 24) + hitMargin, 2);
   }
 
   /**
-   * Handle mouse down event
-   * @param {MouseEvent} e 
+   * Handle pointer down event with canvas-relative coordinates
+   * @param {number} px 
+   * @param {number} py 
    * @param {number} charmX 
    * @param {number} charmY 
    * @param {number} charmRadius 
    * @returns {boolean} Whether charm was grabbed
    */
-  onMouseDown(e, charmX, charmY, charmRadius) {
-    this.mousePos = { x: e.clientX, y: e.clientY };
+  onPointerDown(px, py, charmX, charmY, charmRadius) {
+    this.mousePos = { x: px, y: py };
 
-    if (this.isOverCharm(e.clientX, e.clientY, charmX, charmY, charmRadius)) {
+    if (this.isOverCharm(px, py, charmX, charmY, charmRadius)) {
       this.state = InteractionState.GRABBED;
       this.grabOffset = {
-        x: charmX - e.clientX,
-        y: charmY - e.clientY
+        x: charmX - px,
+        y: charmY - py
       };
       this.velocitySamples = [];
-      this.addVelocitySample(e.clientX, e.clientY);
+      this.addVelocitySample(px, py);
       return true;
     }
 
@@ -61,41 +71,61 @@ export class MouseInteractionHandler {
   }
 
   /**
-   * Handle mouse move event
-   * @param {MouseEvent} e 
+   * Legacy alias for onPointerDown
+   */
+  onMouseDown(e, charmX, charmY, charmRadius) {
+    const px = e.clientX !== undefined ? e.clientX : (e.x || 0);
+    const py = e.clientY !== undefined ? e.clientY : (e.y || 0);
+    return this.onPointerDown(px, py, charmX, charmY, charmRadius);
+  }
+
+  /**
+   * Handle pointer move event with canvas-relative coordinates and boundary clamping
+   * @param {number} px 
+   * @param {number} py 
    * @param {number} charmX 
    * @param {number} charmY 
    * @param {number} charmRadius 
-   * @param {number} width Window width
-   * @param {number} height Window height
+   * @param {number} width Preview container width
+   * @param {number} height Preview container height
    * @returns {{ isDragging: boolean, targetX?: number, targetY?: number }}
    */
-  onMouseMove(e, charmX, charmY, charmRadius, width, height) {
-    this.mousePos = { x: e.clientX, y: e.clientY };
+  onPointerMove(px, py, charmX, charmY, charmRadius, width, height) {
+    this.mousePos = { x: px, y: py };
 
     if (this.state === InteractionState.GRABBED || this.state === InteractionState.DRAGGING) {
       this.state = InteractionState.DRAGGING;
-      this.addVelocitySample(e.clientX, e.clientY);
+      this.addVelocitySample(px, py);
 
-      // Target position clamped to window margins
-      const targetX = Math.max(20, Math.min(width - 20, e.clientX + this.grabOffset.x));
-      const targetY = Math.max(20, Math.min(height - 20, e.clientY + this.grabOffset.y));
+      // Clamp target position to preview window boundaries
+      const margin = Math.max(15, charmRadius || 24);
+      const targetX = Math.max(margin, Math.min((width || 360) - margin, px + this.grabOffset.x));
+      const targetY = Math.max(margin, Math.min((height || 400) - margin, py + this.grabOffset.y));
 
       return { isDragging: true, targetX, targetY };
     }
 
     // Update hover status when idle
-    const hover = this.isOverCharm(e.clientX, e.clientY, charmX, charmY, charmRadius);
+    const hover = this.isOverCharm(px, py, charmX, charmY, charmRadius);
     this.state = hover ? InteractionState.HOVER : InteractionState.IDLE;
 
     return { isDragging: false };
   }
 
   /**
-   * Handle mouse up / release event
+   * Legacy alias for onPointerMove
+   */
+  onMouseMove(e, charmX, charmY, charmRadius, width, height) {
+    const px = e.clientX !== undefined ? e.clientX : (e.x || 0);
+    const py = e.clientY !== undefined ? e.clientY : (e.y || 0);
+    return this.onPointerMove(px, py, charmX, charmY, charmRadius, width, height);
+  }
+
+  /**
+   * Handle pointer up / release event
    * @returns {{ wasDragging: boolean, vx: number, vy: number }} Release velocity
    */
-  onMouseUp() {
+  onPointerUp() {
     if (this.state === InteractionState.DRAGGING || this.state === InteractionState.GRABBED) {
       const { vx, vy } = this.calculateReleaseVelocity();
       this.state = InteractionState.RELEASED;
@@ -109,18 +139,25 @@ export class MouseInteractionHandler {
   }
 
   /**
-   * Handle mouse leaving canvas area
+   * Legacy alias for onPointerUp
+   */
+  onMouseUp() {
+    return this.onPointerUp();
+  }
+
+  /**
+   * Handle mouse/pointer leaving canvas area
    */
   onMouseLeave() {
     if (this.state === InteractionState.DRAGGING || this.state === InteractionState.GRABBED) {
-      return this.onMouseUp();
+      return this.onPointerUp();
     }
     this.state = InteractionState.IDLE;
     return { wasDragging: false, vx: 0, vy: 0 };
   }
 
   /**
-   * Record mouse position sample for velocity calculation
+   * Record pointer position sample for velocity calculation
    * @param {number} x 
    * @param {number} y 
    */

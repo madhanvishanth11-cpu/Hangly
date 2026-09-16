@@ -109,112 +109,107 @@ function updateCursor() {
   }
 }
 
-// Mouse Event Listeners
-canvas.addEventListener('mousedown', (e) => {
-  if (e.button === 2) return; // Ignore right-click
+// Unified Pointer Event Listeners (Mouse, Touch, Stylus)
+let activePointerId = null;
 
-  const charmPoint = ropeSimulation.getBottomPoint();
-  const grabbed = mouseHandler.onMouseDown(e, charmPoint.x, charmPoint.y, hangingObject.charmRadius);
-
-  if (grabbed) {
-    ropeSimulation.setCharmDragPosition(charmPoint.x, charmPoint.y);
-    audioService.playGrab();
-  }
-  updateCursor();
-});
+function getCanvasRelativePos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top,
+    width: rect.width,
+    height: rect.height
+  };
+}
 
 // Right-click charm to open Charm Library
 canvas.addEventListener('contextmenu', (e) => {
   e.preventDefault();
+  const pos = getCanvasRelativePos(e);
   const charmPoint = ropeSimulation.getBottomPoint();
-  if (mouseHandler.isOverCharm(e.clientX, e.clientY, charmPoint.x, charmPoint.y, hangingObject.charmRadius)) {
+  if (mouseHandler.isOverCharm(pos.x, pos.y, charmPoint.x, charmPoint.y, hangingObject.charmRadius)) {
     charmLibraryUI.show();
   }
 });
 
-window.addEventListener('mousemove', (e) => {
+// Pointer Down Event Handler
+canvas.addEventListener('pointerdown', (e) => {
+  if (e.button === 2) return; // Ignore right-click
+  if (ropeSimulation.isFixed) return; // Disable dragging when charm is fixed
+
+  const pos = getCanvasRelativePos(e);
   const charmPoint = ropeSimulation.getBottomPoint();
-  const rect = canvas.getBoundingClientRect();
+  const grabbed = mouseHandler.onPointerDown(pos.x, pos.y, charmPoint.x, charmPoint.y, hangingObject.charmRadius);
 
-  const { isDragging, targetX, targetY } = mouseHandler.onMouseMove(
-    e,
-    charmPoint.x,
-    charmPoint.y,
-    hangingObject.charmRadius,
-    rect.width,
-    rect.height
-  );
-
-  if (isDragging && targetX !== undefined && targetY !== undefined) {
-    ropeSimulation.setCharmDragPosition(targetX, targetY);
-  }
-  updateCursor();
-});
-
-window.addEventListener('mouseup', () => {
-  const { wasDragging, vx, vy } = mouseHandler.onMouseUp();
-  if (wasDragging) {
-    ropeSimulation.releaseCharmWithVelocity(vx, vy);
-    const speed = Math.hypot(vx, vy);
-    audioService.playRelease(speed);
-  }
-  updateCursor();
-});
-
-// Mobile Touch Event Listeners (touchstart, touchmove, touchend)
-function getTouchPos(e) {
-  if (e.touches && e.touches.length > 0) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      clientX: e.touches[0].clientX - rect.left,
-      clientY: e.touches[0].clientY - rect.top
-    };
-  }
-  return null;
-}
-
-canvas.addEventListener('touchstart', (e) => {
-  const pos = getTouchPos(e);
-  if (!pos) return;
-  const charmPoint = ropeSimulation.getBottomPoint();
-  const grabbed = mouseHandler.onMouseDown(pos, charmPoint.x, charmPoint.y, hangingObject.charmRadius);
   if (grabbed) {
+    activePointerId = e.pointerId;
+    try {
+      canvas.setPointerCapture(e.pointerId);
+    } catch (err) {
+      // Fallback if setPointerCapture throws or is unsupported
+    }
     if (e.cancelable) e.preventDefault();
     ropeSimulation.setCharmDragPosition(charmPoint.x, charmPoint.y);
     audioService.playGrab();
+    updateCursor();
   }
-}, { passive: false });
+});
 
-window.addEventListener('touchmove', (e) => {
-  if (mouseHandler.state !== InteractionState.GRABBED && mouseHandler.state !== InteractionState.DRAGGING) return;
-  const pos = getTouchPos(e);
-  if (!pos) return;
+// Pointer Move Event Handler
+function handlePointerMove(e) {
+  const pos = getCanvasRelativePos(e);
   const charmPoint = ropeSimulation.getBottomPoint();
-  const rect = canvas.getBoundingClientRect();
 
-  const { isDragging, targetX, targetY } = mouseHandler.onMouseMove(
-    pos,
+  const { isDragging, targetX, targetY } = mouseHandler.onPointerMove(
+    pos.x,
+    pos.y,
     charmPoint.x,
     charmPoint.y,
     hangingObject.charmRadius,
-    rect.width,
-    rect.height
+    pos.width,
+    pos.height
   );
 
   if (isDragging && targetX !== undefined && targetY !== undefined) {
     if (e.cancelable) e.preventDefault();
     ropeSimulation.setCharmDragPosition(targetX, targetY);
   }
-}, { passive: false });
+  updateCursor();
+}
 
-window.addEventListener('touchend', () => {
-  const { wasDragging, vx, vy } = mouseHandler.onMouseUp();
+canvas.addEventListener('pointermove', handlePointerMove);
+window.addEventListener('pointermove', (e) => {
+  if (mouseHandler.state === InteractionState.GRABBED || mouseHandler.state === InteractionState.DRAGGING) {
+    handlePointerMove(e);
+  }
+});
+
+// Pointer Up & Cancel Event Handler
+function handlePointerUp(e) {
+  if (activePointerId !== null && e.pointerId === activePointerId) {
+    try {
+      if (canvas.hasPointerCapture(e.pointerId)) {
+        canvas.releasePointerCapture(e.pointerId);
+      }
+    } catch (err) {
+      // Ignore if pointer capture release fails
+    }
+    activePointerId = null;
+  }
+
+  const { wasDragging, vx, vy } = mouseHandler.onPointerUp();
   if (wasDragging) {
     ropeSimulation.releaseCharmWithVelocity(vx, vy);
     const speed = Math.hypot(vx, vy);
     audioService.playRelease(speed);
   }
-});
+  updateCursor();
+}
+
+canvas.addEventListener('pointerup', handlePointerUp);
+canvas.addEventListener('pointercancel', handlePointerUp);
+window.addEventListener('pointerup', handlePointerUp);
+window.addEventListener('pointercancel', handlePointerUp);
 
 window.addEventListener('mouseleave', () => {
   const { wasDragging, vx, vy } = mouseHandler.onMouseLeave();
