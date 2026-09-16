@@ -1,5 +1,12 @@
 {
+  "version": 2,
   "cleanUrls": true,
   "buildCommand": "echo static site",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
