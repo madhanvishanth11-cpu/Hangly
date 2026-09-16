@@ -12,7 +12,7 @@ export class CharmLibrary {
     this.customStore.libraryRef = this;
 
     this.STORAGE_KEY = 'hangly_selected_charm_id';
-    this.FALLBACK_ID = 'silver_coin';
+    this.FALLBACK_ID = 'gold_star';
 
     this.registerBuiltInCharms();
     this.activeCharmId = this.loadSavedCharmId();
@@ -361,6 +361,111 @@ export class CharmLibrary {
         ctx.shadowColor = 'transparent';
         ctx.lineWidth = 1.5;
         ctx.strokeStyle = '#FDBA74';
+        ctx.stroke();
+      }
+    }));
+
+    // 11. Crystal Diamond
+    this.register(new Charm({
+      id: 'diamond_gem',
+      name: 'Crystal Diamond',
+      category: 'Gems',
+      radius: 24,
+      render: (ctx, radius, isGrabbed) => {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 5;
+
+        const r = radius * 0.95;
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 1.1);
+        ctx.lineTo(r, -r * 0.3);
+        ctx.lineTo(0, r * 1.1);
+        ctx.lineTo(-r, -r * 0.3);
+        ctx.closePath();
+
+        const grad = ctx.createLinearGradient(-r, -r, r, r);
+        grad.addColorStop(0, '#FFFFFF');
+        grad.addColorStop(0.4, '#CFFAFE');
+        grad.addColorStop(0.8, '#38BDF8');
+        grad.addColorStop(1, '#0284C7');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.shadowColor = 'transparent';
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = isGrabbed ? '#38BDF8' : '#FFFFFF';
+        ctx.stroke();
+      }
+    }));
+
+    // 12. Cherry Blossom
+    this.register(new Charm({
+      id: 'cherry_blossom',
+      name: 'Cherry Blossom',
+      category: 'Nature',
+      radius: 24,
+      render: (ctx, radius, isGrabbed) => {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 5;
+
+        const petals = 5;
+        const r = radius * 0.95;
+
+        for (let i = 0; i < petals; i++) {
+          const angle = (i * Math.PI * 2) / petals - Math.PI / 2;
+          ctx.save();
+          ctx.rotate(angle);
+          ctx.beginPath();
+          ctx.ellipse(0, -r * 0.6, r * 0.35, r * 0.55, 0, 0, Math.PI * 2);
+          const pGrad = ctx.createRadialGradient(0, -r * 0.6, 2, 0, -r * 0.6, r * 0.55);
+          pGrad.addColorStop(0, '#FCE7F3');
+          pGrad.addColorStop(0.6, '#F472B6');
+          pGrad.addColorStop(1, '#DB2777');
+          ctx.fillStyle = pGrad;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        ctx.shadowColor = 'transparent';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.28, 0, Math.PI * 2);
+        ctx.fillStyle = '#FDE047';
+        ctx.fill();
+      }
+    }));
+
+    // 13. Cosmic Prism
+    this.register(new Charm({
+      id: 'cosmic_star',
+      name: 'Cosmic Prism',
+      category: 'Celestial',
+      radius: 24,
+      render: (ctx, radius, isGrabbed) => {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 5;
+
+        const r = radius * 0.95;
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 1.15);
+        ctx.lineTo(r * 0.95, 0);
+        ctx.lineTo(0, r * 1.15);
+        ctx.lineTo(-r * 0.95, 0);
+        ctx.closePath();
+
+        const grad = ctx.createLinearGradient(-r, -r, r, r);
+        grad.addColorStop(0, '#F472B6');
+        grad.addColorStop(0.33, '#C084FC');
+        grad.addColorStop(0.66, '#60A5FA');
+        grad.addColorStop(1, '#34D399');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.shadowColor = 'transparent';
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
       }
     }));

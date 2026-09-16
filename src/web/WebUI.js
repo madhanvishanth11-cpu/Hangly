@@ -434,30 +434,42 @@ export class WebUI {
     scaleInput.addEventListener('input', (e) => {
       this.studioSettings.scale = parseFloat(e.target.value);
       container.querySelector('#web-val-scale').textContent = this.studioSettings.scale.toFixed(2);
+      activeCharm.settings = { ...this.studioSettings };
+      this.ropeSimulation.wakeUp();
     });
 
     rotInput.addEventListener('input', (e) => {
       this.studioSettings.rotation = parseInt(e.target.value, 10);
       container.querySelector('#web-val-rot').textContent = this.studioSettings.rotation;
+      activeCharm.settings = { ...this.studioSettings };
+      this.ropeSimulation.wakeUp();
     });
 
     offXInput.addEventListener('input', (e) => {
       this.studioSettings.offsetX = parseInt(e.target.value, 10);
       container.querySelector('#web-val-offx').textContent = this.studioSettings.offsetX;
+      activeCharm.settings = { ...this.studioSettings };
+      this.ropeSimulation.wakeUp();
     });
 
     offYInput.addEventListener('input', (e) => {
       this.studioSettings.offsetY = parseInt(e.target.value, 10);
       container.querySelector('#web-val-offy').textContent = this.studioSettings.offsetY;
+      activeCharm.settings = { ...this.studioSettings };
+      this.ropeSimulation.wakeUp();
     });
 
     opacInput.addEventListener('input', (e) => {
       this.studioSettings.opacity = parseFloat(e.target.value);
       container.querySelector('#web-val-opac').textContent = Math.round(this.studioSettings.opacity * 100);
+      activeCharm.settings = { ...this.studioSettings };
+      this.ropeSimulation.wakeUp();
     });
 
     fitSelect.addEventListener('change', (e) => {
       this.studioSettings.imageFit = e.target.value;
+      activeCharm.settings = { ...this.studioSettings };
+      this.ropeSimulation.wakeUp();
     });
 
     container.querySelector('#web-studio-reset').addEventListener('click', () => {

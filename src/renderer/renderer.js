@@ -161,6 +161,61 @@ window.addEventListener('mouseup', () => {
   updateCursor();
 });
 
+// Mobile Touch Event Listeners (touchstart, touchmove, touchend)
+function getTouchPos(e) {
+  if (e.touches && e.touches.length > 0) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      clientX: e.touches[0].clientX - rect.left,
+      clientY: e.touches[0].clientY - rect.top
+    };
+  }
+  return null;
+}
+
+canvas.addEventListener('touchstart', (e) => {
+  const pos = getTouchPos(e);
+  if (!pos) return;
+  const charmPoint = ropeSimulation.getBottomPoint();
+  const grabbed = mouseHandler.onMouseDown(pos, charmPoint.x, charmPoint.y, hangingObject.charmRadius);
+  if (grabbed) {
+    if (e.cancelable) e.preventDefault();
+    ropeSimulation.setCharmDragPosition(charmPoint.x, charmPoint.y);
+    audioService.playGrab();
+  }
+}, { passive: false });
+
+window.addEventListener('touchmove', (e) => {
+  if (mouseHandler.state !== InteractionState.GRABBED && mouseHandler.state !== InteractionState.DRAGGING) return;
+  const pos = getTouchPos(e);
+  if (!pos) return;
+  const charmPoint = ropeSimulation.getBottomPoint();
+  const rect = canvas.getBoundingClientRect();
+
+  const { isDragging, targetX, targetY } = mouseHandler.onMouseMove(
+    pos,
+    charmPoint.x,
+    charmPoint.y,
+    hangingObject.charmRadius,
+    rect.width,
+    rect.height
+  );
+
+  if (isDragging && targetX !== undefined && targetY !== undefined) {
+    if (e.cancelable) e.preventDefault();
+    ropeSimulation.setCharmDragPosition(targetX, targetY);
+  }
+}, { passive: false });
+
+window.addEventListener('touchend', () => {
+  const { wasDragging, vx, vy } = mouseHandler.onMouseUp();
+  if (wasDragging) {
+    ropeSimulation.releaseCharmWithVelocity(vx, vy);
+    const speed = Math.hypot(vx, vy);
+    audioService.playRelease(speed);
+  }
+});
+
 window.addEventListener('mouseleave', () => {
   const { wasDragging, vx, vy } = mouseHandler.onMouseLeave();
   if (wasDragging) {
